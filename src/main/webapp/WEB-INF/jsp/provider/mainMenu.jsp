@@ -84,6 +84,27 @@
     String userlastname = loggedInProvider != null ? loggedInProvider.getLastName() : "";
     String encodedUserName = URLEncoder.encode(StringUtils.trim(userfirstname + " " + userlastname), StandardCharsets.UTF_8);
     boolean scheduleNavActive = "1".equals(request.getParameter("scheduleNav"));
+    String navRequestPath = StringUtils.defaultString(request.getRequestURI()) + " "
+            + StringUtils.defaultString(request.getServletPath()) + " "
+            + StringUtils.defaultString((String) request.getAttribute("jakarta.servlet.forward.request_uri")) + " "
+            + StringUtils.defaultString((String) request.getAttribute("jakarta.servlet.forward.servlet_path"));
+    boolean scheduleTabActive = navRequestPath.contains("/provider/providercontrol")
+            || navRequestPath.contains("appointmentprovideradmin");
+    boolean searchTabActive = navRequestPath.contains("/demographic/ViewSearch")
+            || navRequestPath.contains("/PMmodule/ClientSearch");
+    boolean inboxTabActive = navRequestPath.contains("/web/inboxhub")
+            || navRequestPath.contains("/documentManager/ViewInbox");
+    boolean ticklerTabActive = navRequestPath.contains("/tickler/");
+    boolean messengerTabActive = navRequestPath.contains("/messenger/");
+    boolean consultationTabActive = navRequestPath.contains("/encounter/IncomingConsultation")
+            || navRequestPath.contains("/encounter/oscarConsultationRequest");
+    boolean documentTabActive = navRequestPath.contains("/documentManager/") && !inboxTabActive;
+    boolean reportTabActive = navRequestPath.contains("/report/")
+            || navRequestPath.contains("/oscarReport/");
+    boolean adminTabActive = navRequestPath.contains("/administration")
+            || navRequestPath.contains("/admin/");
+    boolean resourceTabActive = navRequestPath.contains("/resource");
+    boolean econsultTabActive = navRequestPath.contains("/encounter/econsult");
 
     // Build menu destinations once so same-tab navigation and popup fallbacks cannot drift apart.
     String messengerUrl = request.getContextPath() + "/messenger/DisplayMessages?providerNo=" + curUser_no + "&userName=" + encodedUserName;
@@ -106,14 +127,14 @@
             <ul id="navlist">
                 <c:if test="${infirmaryView_isOscar ne 'false'}">
                     <% if (request.getParameter("viewall") != null && request.getParameter("viewall").equals("1")) { %>
-                    <li>
+                    <li class="<%= scheduleTabActive ? "nav-active" : "" %>">
                         <a href=# onClick="review('0')"
                            title="<fmt:message key="provider.appointmentProviderAdminDay.viewProvAval"/>">
                             <fmt:message key="provider.appointmentProviderAdminDay.schedView"/>
                         </a>
                     </li>
                     <% } else { %>
-                    <li>
+                    <li class="<%= scheduleTabActive ? "nav-active" : "" %>">
                         <a href='<%= request.getContextPath() %>/provider/providercontrol?year=<%=curYear%>&month=<%=curMonth%>&day=<%=curDay%>&view=0&displaymode=day&dboperation=searchappointmentday&viewall=1'>
                             <fmt:message key="provider.appointmentProviderAdminDay.schedView"/>
                         </a>
@@ -132,7 +153,7 @@
                         <% } %>
 
                         <security:oscarSec roleName="<%=roleName$%>" objectName="_search" rights="r">
-                            <li id="search">
+                            <li id="search" class="<%= searchTabActive ? "nav-active" : "" %>">
                                 <caisi:isModuleLoad moduleName="caisi">
                                     <%
                                         String caisiSearch = oscarVariables.getProperty("caisi.search.workflow", "true");
@@ -162,7 +183,7 @@
                             <oscar:oscarPropertiesCheck property="NOT_FOR_CAISI" value="no" defaultVal="true">
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_appointment.doctorLink"
                                                    rights="r">
-                                    <li>
+                                    <li class="<%= inboxTabActive ? "nav-active" : "" %>">
                                         <a HREF="#" id="inboxLink"
                                            TITLE='<fmt:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>
                                             <span id="oscar_new_lab"><fmt:message key="global.lab"/></span>
@@ -177,7 +198,7 @@
                         </caisi:isModuleLoad>
 
                         <security:oscarSec roleName="<%=roleName$%>" objectName="_tickler" rights="r">
-                            <li>
+                            <li class="<%= ticklerTabActive ? "nav-active" : "" %>">
                                 <a HREF="#"
                                    ONCLICK="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(ticklerUrl)%>', function(u){ popupPage2(u,'ticklerPage'); }, event);"
                                    TITLE='<fmt:message key="global.tickler"/>'>
@@ -187,7 +208,7 @@
 
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r">
-                                <li>
+                                <li class="<%= messengerTabActive ? "nav-active" : "" %>">
                                     <a HREF="#"
                                        ONCLICK="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(messengerUrl)%>', function(u){ popupOscarRx(600,1024,u); }, event);"
                                        title="<fmt:message key="global.messenger"/>">
@@ -197,7 +218,7 @@
                         </caisi:isModuleLoad>
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="r">
-                                <li id="con">
+                                <li id="con" class="<%= consultationTabActive ? "nav-active" : "" %>">
                                     <a HREF="#"
                                        ONCLICK="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(consultationUrl)%>', function(u){ popupOscarRx(625,1024,u); }, event);"
                                        title="<fmt:message key="provider.appointmentProviderAdminDay.viewConReq"/>">
@@ -207,7 +228,7 @@
                         </caisi:isModuleLoad>
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
-                                <li>
+                                <li class="<%= documentTabActive ? "nav-active" : "" %>">
                                     <a HREF="#"
                                        onclick="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(documentReportUrl)%>', function(u){ popup('700', '1024', u, 'edocView'); }, event);"
                                        TITLE='<fmt:message key="provider.appointmentProviderAdminDay.viewEdoc"/>'><fmt:message key="global.edoc"/></a>
@@ -217,7 +238,7 @@
 
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_report" rights="r">
-                                <li>
+                                <li class="<%= reportTabActive ? "nav-active" : "" %>">
                                     <a HREF="#"
                                        ONCLICK="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(reportIndexUrl)%>', function(u){ popupPage2(u,'reportPage'); }, event);"
                                        TITLE='<fmt:message key="global.genReport"/>'
@@ -231,7 +252,7 @@
                                                objectName="_admin,_admin.userAdmin,_admin.schedule,_admin.billing,_admin.resource,_admin.reporting,_admin.backup,_admin.messenger,_admin.eform,_admin.encounter,_admin.misc,_admin.fax,_admin.flowsheet"
                                                rights="r">
 
-                                <li id="admin2">
+                                <li id="admin2" class="<%= adminTabActive ? "nav-active" : "" %>">
                                     <a href="javascript:void(0)" id="admin-panel" TITLE='<fmt:message key="admin.admin.page.title"/>'
                                        onclick="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(administrationUrl)%>', function(u){ newWindow(u,'admin'); }, event);"><fmt:message key="provider.mainMenu.administration"/></a>
                                 </li>
@@ -241,7 +262,7 @@
 
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_resource" rights="r">
-                                <li>
+                                <li class="<%= resourceTabActive ? "nav-active" : "" %>">
                                     <a href="#" ONCLICK="popupPage2('<%=SafeEncode.forJavaScriptAttribute(StringUtils.defaultString(resourcebaseurl))%>');return false;"
                                        title="<fmt:message key="provider.appointmentProviderAdminDay.viewResources"/>"
                                        onmouseover="window.status='<fmt:message key="provider.appointmentProviderAdminDay.viewResources"/>';return true"><fmt:message key="encounter.Index.clinicalResources"/></a>
@@ -268,7 +289,7 @@
                             boolean hide_eConsult = CarlosProperties.getInstance().isPropertyActive("hide_eConsult_link");
                             if ("on".equalsIgnoreCase(prov) && !hide_eConsult) {
                         %>
-                        <li id="econ">
+                        <li id="econ" class="<%= econsultTabActive ? "nav-active" : "" %>">
                             <a href="#" onclick="popupOscarRx(625, 1024, '<%=SafeEncode.forJavaScriptAttribute(econsultUrl)%>')"
                                title="eConsult">
                                 <span><fmt:message key="provider.mainMenu.eConsult"/></span></a>

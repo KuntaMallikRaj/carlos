@@ -325,6 +325,14 @@ table#firstTable a:focus-visible {
     background-color: #486ebd;
 }
 
+table#firstTable td#firstMenu ul#navlist li.nav-active,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a:visited,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a:active {
+    color: #fff;
+    background-color: #486ebd;
+}
+
 input, select, textarea {
     background-color: #F4EaD7;
     border: 1px solid #0097cf;
@@ -445,6 +453,12 @@ table#firstTable td#firstMenu #navlist li:hover {
 table#firstTable td#firstMenu #navlist li a:hover {
     color: #fff;
     background-color: #486ebd;
+}
+
+table#firstTable td#firstMenu ul#navlist li.nav-active > a.tabalert,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a .tabalert,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a span {
+    color: #fff !important;
 }
 
 table#firstTable td#firstMenu #navlist #logoutMobile {

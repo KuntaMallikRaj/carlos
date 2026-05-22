@@ -57,8 +57,12 @@ class ScheduleNavigationAssetRegressionTest {
             Path.of("src", "main", "webapp", "WEB-INF", "jsp", "messenger", "CreateMessage.jsp");
     private static final Path MAIN_MENU_JSP =
             Path.of("src", "main", "webapp", "WEB-INF", "jsp", "provider", "mainMenu.jsp");
+    private static final Path APPOINTMENT_PROVIDER_DAY_JSP =
+            Path.of("src", "main", "webapp", "WEB-INF", "jsp", "provider", "appointmentprovideradminday.jsp");
     private static final Path TOPNAV_CSS =
             Path.of("src", "main", "webapp", "css", "topnav.css");
+    private static final Path RECEPTIONIST_APPT_CSS =
+            Path.of("src", "main", "webapp", "css", "receptionistapptstyle.css");
     /**
      * Verifies sortable mailbox-header URLs keep their existing query state and
      * append the schedule navigation flag after box/demographic parameters.
@@ -102,15 +106,22 @@ class ScheduleNavigationAssetRegressionTest {
         String viewMessage = Files.readString(VIEW_MESSAGE_JSP, StandardCharsets.UTF_8);
         String createMessage = Files.readString(CREATE_MESSAGE_JSP, StandardCharsets.UTF_8);
         String mainMenu = Files.readString(MAIN_MENU_JSP, StandardCharsets.UTF_8);
+        String appointmentProviderDay = Files.readString(APPOINTMENT_PROVIDER_DAY_JSP, StandardCharsets.UTF_8);
         String scheduleScript = Files.readString(SCHEDULE_PAGE_SCRIPT, StandardCharsets.UTF_8);
         String topnavCss = Files.readString(TOPNAV_CSS, StandardCharsets.UTF_8);
+        String receptionistApptCss = Files.readString(RECEPTIONIST_APPT_CSS, StandardCharsets.UTF_8);
 
         assertThat(documentReport)
                 .contains("<link rel=\"stylesheet\" href=\"<%=request.getContextPath()%>/css/topnav.css\">")
                 .contains("<jsp:include page=\"/WEB-INF/jsp/provider/mainMenu.jsp\"/>");
         assertThat(topnavCss)
                 .contains("table#firstTable .dashboardDropdown")
-                .contains("table#firstTable .dropdown:hover .dashboardDropdown");
+                .contains("table#firstTable .dropdown:hover .dashboardDropdown")
+                .contains("li.nav-active > a")
+                .contains("background-color: #486ebd;");
+        assertThat(receptionistApptCss)
+                .contains("li.nav-active > a")
+                .contains("background-color: #486ebd;");
         assertThat(displayMessages)
                 .contains("String boxTypeQuerySuffix = pageType > 0 ? \"&boxType=\" + pageType : \"\";")
                 .contains("String demographicQuerySuffix = pageType == 3 && demographic_no != null")
@@ -128,9 +139,16 @@ class ScheduleNavigationAssetRegressionTest {
                 .contains("ClearMessage<%=scheduleNavFirstQuerySuffix%>")
                 .contains("DisplayMessages<%=scheduleNavFirstQuerySuffix%>");
         assertThat(mainMenu)
+                .contains("navRequestPath")
+                .contains("scheduleTabActive")
+                .contains("messengerTabActive")
+                .contains("class=\"<%= scheduleTabActive ? \"nav-active\" : \"\" %>\"")
+                .contains("class=\"<%= messengerTabActive ? \"nav-active\" : \"\" %>\"")
                 .contains("!window.popup.scheduleMenuFallback")
                 .contains("fallbackMenuPopup.scheduleMenuFallback = true;")
                 .contains("window.popup = fallbackMenuPopup;");
+        assertThat(appointmentProviderDay)
+                .contains("<li class=\"nav-active\">");
         assertThat(scheduleScript)
                 .contains("var usesScheduleShell = scheduleNavigationMode === 'focused'"
                         + " || scheduleNavigationMode === 'tab';")

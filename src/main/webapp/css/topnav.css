@@ -80,6 +80,20 @@ table#firstTable td#firstMenu #navlist li a:hover {
     background-color: #486ebd;
 }
 
+table#firstTable td#firstMenu ul#navlist li.nav-active,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a:visited,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a:active {
+    color: #fff;
+    background-color: #486ebd;
+}
+
+table#firstTable td#firstMenu ul#navlist li.nav-active > a.tabalert,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a .tabalert,
+table#firstTable td#firstMenu ul#navlist li.nav-active > a span {
+    color: #fff !important;
+}
+
 table#firstTable #logoutButton span {
     font-size: 18px;
 }

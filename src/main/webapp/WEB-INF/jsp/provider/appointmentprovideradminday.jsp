@@ -903,14 +903,14 @@
                 <ul id="navlist">
                     <c:if test="${infirmaryView_isOscar != 'false'}">
                         <% if (request.getParameter("viewall") != null && request.getParameter("viewall").equals("1")) { %>
-                        <li>
+                        <li class="nav-active">
                             <a href=# onClick="review('0')"
                                title="<fmt:message key="provider.appointmentProviderAdminDay.viewProvAval"/>">
                                 <fmt:message key="provider.appointmentProviderAdminDay.schedView"/>
                             </a>
                         </li>
                         <% } else { %>
-                        <li>
+                        <li class="nav-active">
                             <a href='<%= request.getContextPath() %>/provider/providercontrol?year=<%=curYear%>&month=<%=curMonth%>&day=<%=curDay%>&view=0&displaymode=day&dboperation=searchappointmentday&viewall=1'>
                                 <fmt:message key="provider.appointmentProviderAdminDay.schedView"/>
                             </a>
