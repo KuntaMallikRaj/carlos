@@ -329,8 +329,8 @@ table#firstTable td#firstMenu ul#navlist li.nav-active,
 table#firstTable td#firstMenu ul#navlist li.nav-active > a,
 table#firstTable td#firstMenu ul#navlist li.nav-active > a:visited,
 table#firstTable td#firstMenu ul#navlist li.nav-active > a:active {
-    color: #fff;
-    background-color: #486ebd;
+    color: #00283c;
+    background-color: #d9d9d9;
 }
 
 input, select, textarea {
@@ -458,7 +458,7 @@ table#firstTable td#firstMenu #navlist li a:hover {
 table#firstTable td#firstMenu ul#navlist li.nav-active > a.tabalert,
 table#firstTable td#firstMenu ul#navlist li.nav-active > a .tabalert,
 table#firstTable td#firstMenu ul#navlist li.nav-active > a span {
-    color: #fff !important;
+    color: #00283c !important;
 }
 
 table#firstTable td#firstMenu #navlist #logoutMobile {

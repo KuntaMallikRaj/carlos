@@ -57,6 +57,48 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="carlos" prefix="carlos" %>
 
+<%!
+    private String requestPathAttribute(Object value) {
+        return value instanceof String ? (String) value : "";
+    }
+
+    private boolean pathMatches(String path, String pattern) {
+        if (StringUtils.isBlank(path) || StringUtils.isBlank(pattern)) {
+            return false;
+        }
+
+        int index = path.indexOf(pattern);
+        if (index < 0) {
+            return false;
+        }
+
+        int boundaryIndex = index + pattern.length();
+        if (boundaryIndex >= path.length() || pattern.endsWith("/")) {
+            return true;
+        }
+
+        char boundary = path.charAt(boundaryIndex);
+        return boundary == '/' || boundary == '?' || boundary == ';' || boundary == '#';
+    }
+
+    private boolean requestPathMatches(jakarta.servlet.http.HttpServletRequest request, String... patterns) {
+        String requestUri = StringUtils.defaultString(request.getRequestURI());
+        String servletPath = StringUtils.defaultString(request.getServletPath());
+        String forwardRequestUri = requestPathAttribute(request.getAttribute("jakarta.servlet.forward.request_uri"));
+        String forwardServletPath = requestPathAttribute(request.getAttribute("jakarta.servlet.forward.servlet_path"));
+
+        for (String pattern : patterns) {
+            if (pathMatches(requestUri, pattern)
+                    || pathMatches(servletPath, pattern)
+                    || pathMatches(forwardRequestUri, pattern)
+                    || pathMatches(forwardServletPath, pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+%>
+
 <%
     GregorianCalendar cal = new GregorianCalendar();
     int curYear = cal.get(Calendar.YEAR);
@@ -84,27 +126,20 @@
     String userlastname = loggedInProvider != null ? loggedInProvider.getLastName() : "";
     String encodedUserName = URLEncoder.encode(StringUtils.trim(userfirstname + " " + userlastname), StandardCharsets.UTF_8);
     boolean scheduleNavActive = "1".equals(request.getParameter("scheduleNav"));
-    String navRequestPath = StringUtils.defaultString(request.getRequestURI()) + " "
-            + StringUtils.defaultString(request.getServletPath()) + " "
-            + StringUtils.defaultString((String) request.getAttribute("jakarta.servlet.forward.request_uri")) + " "
-            + StringUtils.defaultString((String) request.getAttribute("jakarta.servlet.forward.servlet_path"));
-    boolean scheduleTabActive = navRequestPath.contains("/provider/providercontrol")
-            || navRequestPath.contains("appointmentprovideradmin");
-    boolean searchTabActive = navRequestPath.contains("/demographic/ViewSearch")
-            || navRequestPath.contains("/PMmodule/ClientSearch");
-    boolean inboxTabActive = navRequestPath.contains("/web/inboxhub")
-            || navRequestPath.contains("/documentManager/ViewInbox");
-    boolean ticklerTabActive = navRequestPath.contains("/tickler/");
-    boolean messengerTabActive = navRequestPath.contains("/messenger/");
-    boolean consultationTabActive = navRequestPath.contains("/encounter/IncomingConsultation")
-            || navRequestPath.contains("/encounter/oscarConsultationRequest");
-    boolean documentTabActive = navRequestPath.contains("/documentManager/") && !inboxTabActive;
-    boolean reportTabActive = navRequestPath.contains("/report/")
-            || navRequestPath.contains("/oscarReport/");
-    boolean adminTabActive = navRequestPath.contains("/administration")
-            || navRequestPath.contains("/admin/");
-    boolean resourceTabActive = navRequestPath.contains("/resource");
-    boolean econsultTabActive = navRequestPath.contains("/encounter/econsult");
+    boolean scheduleTabActive = requestPathMatches(request, "/provider/providercontrol",
+            "/provider/appointmentprovideradmin", "/provider/appointmentprovideradminday");
+    boolean searchTabActive = requestPathMatches(request, "/demographic/ViewSearch",
+            "/PMmodule/ClientSearch", "/PMmodule/ClientSearch2");
+    boolean inboxTabActive = requestPathMatches(request, "/web/inboxhub",
+            "/documentManager/ViewInbox");
+    boolean ticklerTabActive = requestPathMatches(request, "/tickler/");
+    boolean messengerTabActive = requestPathMatches(request, "/messenger/");
+    boolean consultationTabActive = requestPathMatches(request, "/encounter/IncomingConsultation",
+            "/encounter/oscarConsultationRequest");
+    boolean documentTabActive = requestPathMatches(request, "/documentManager/") && !inboxTabActive;
+    boolean reportTabActive = requestPathMatches(request, "/report/", "/oscarReport/");
+    boolean adminTabActive = requestPathMatches(request, "/administration", "/admin/");
+    boolean econsultTabActive = requestPathMatches(request, "/encounter/econsult");
 
     // Build menu destinations once so same-tab navigation and popup fallbacks cannot drift apart.
     String messengerUrl = request.getContextPath() + "/messenger/DisplayMessages?providerNo=" + curUser_no + "&userName=" + encodedUserName;
@@ -257,16 +292,6 @@
                                        onclick="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(administrationUrl)%>', function(u){ newWindow(u,'admin'); }, event);"><fmt:message key="provider.mainMenu.administration"/></a>
                                 </li>
 
-                            </security:oscarSec>
-                        </caisi:isModuleLoad>
-
-                        <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
-                            <security:oscarSec roleName="<%=roleName$%>" objectName="_resource" rights="r">
-                                <li class="<%= resourceTabActive ? "nav-active" : "" %>">
-                                    <a href="#" ONCLICK="popupPage2('<%=SafeEncode.forJavaScriptAttribute(StringUtils.defaultString(resourcebaseurl))%>');return false;"
-                                       title="<fmt:message key="provider.appointmentProviderAdminDay.viewResources"/>"
-                                       onmouseover="window.status='<fmt:message key="provider.appointmentProviderAdminDay.viewResources"/>';return true"><fmt:message key="encounter.Index.clinicalResources"/></a>
-                                </li>
                             </security:oscarSec>
                         </caisi:isModuleLoad>
 

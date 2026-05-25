@@ -118,10 +118,12 @@ class ScheduleNavigationAssetRegressionTest {
                 .contains("table#firstTable .dashboardDropdown")
                 .contains("table#firstTable .dropdown:hover .dashboardDropdown")
                 .contains("li.nav-active > a")
-                .contains("background-color: #486ebd;");
+                .contains("background-color: #d9d9d9;")
+                .contains("color: #00283c !important;");
         assertThat(receptionistApptCss)
                 .contains("li.nav-active > a")
-                .contains("background-color: #486ebd;");
+                .contains("background-color: #d9d9d9;")
+                .contains("color: #00283c !important;");
         assertThat(displayMessages)
                 .contains("String boxTypeQuerySuffix = pageType > 0 ? \"&boxType=\" + pageType : \"\";")
                 .contains("String demographicQuerySuffix = pageType == 3 && demographic_no != null")
@@ -139,14 +141,22 @@ class ScheduleNavigationAssetRegressionTest {
                 .contains("ClearMessage<%=scheduleNavFirstQuerySuffix%>")
                 .contains("DisplayMessages<%=scheduleNavFirstQuerySuffix%>");
         assertThat(mainMenu)
-                .contains("navRequestPath")
+                .contains("requestPathMatches")
+                .contains("requestPathAttribute")
+                .contains("value instanceof String")
                 .contains("scheduleTabActive")
                 .contains("messengerTabActive")
+                .contains("requestPathMatches(request, \"/provider/providercontrol\",")
+                .contains("\"/provider/appointmentprovideradmin\", \"/provider/appointmentprovideradminday\")")
                 .contains("class=\"<%= scheduleTabActive ? \"nav-active\" : \"\" %>\"")
                 .contains("class=\"<%= messengerTabActive ? \"nav-active\" : \"\" %>\"")
                 .contains("!window.popup.scheduleMenuFallback")
                 .contains("fallbackMenuPopup.scheduleMenuFallback = true;")
-                .contains("window.popup = fallbackMenuPopup;");
+                .contains("window.popup = fallbackMenuPopup;")
+                .doesNotContain("navRequestPath")
+                .doesNotContain("(String) request.getAttribute")
+                .doesNotContain("resourceTabActive")
+                .doesNotContain("encounter.Index.clinicalResources");
         assertThat(appointmentProviderDay)
                 .contains("<li class=\"nav-active\">");
         assertThat(scheduleScript)
