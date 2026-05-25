@@ -155,10 +155,10 @@
 <input type="hidden" value="${pageContext.servletContext.contextPath}" id="contextPath" />
 <table id="firstTable" class="noprint">
     <tr>
-        <td class="icon-container">
-            <img alt="CARLOS EMR" src="<%=request.getContextPath()%>/images/oscar_logo_small.png" width="19">
-        </td>
         <td id="firstMenu">
+            <div class="icon-container">
+                <img alt="CARLOS EMR" src="<%=request.getContextPath()%>/images/oscar_logo_small.png" width="19">
+            </div>
             <ul id="navlist">
                 <c:if test="${infirmaryView_isOscar ne 'false'}">
                     <% if (request.getParameter("viewall") != null && request.getParameter("viewall").equals("1")) { %>
@@ -261,6 +261,17 @@
                                 </li>
                             </security:oscarSec>
                         </caisi:isModuleLoad>
+                        <%
+                            boolean hide_eConsult = CarlosProperties.getInstance().isPropertyActive("hide_eConsult_link");
+                            if ("on".equalsIgnoreCase(prov) && !hide_eConsult) {
+                        %>
+                        <li id="econ" class="<%= econsultTabActive ? "nav-active" : "" %>">
+                            <a href="#" onclick="popupOscarRx(625, 1024, '<%=SafeEncode.forJavaScriptAttribute(econsultUrl)%>')"
+                               title="eConsult">
+                                <span><fmt:message key="provider.mainMenu.eConsult"/></span></a>
+                        </li>
+                        <% } %>
+
                         <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
                                 <li class="<%= documentTabActive ? "nav-active" : "" %>">
@@ -282,19 +293,6 @@
                             </security:oscarSec>
                         </caisi:isModuleLoad>
 
-                        <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
-                            <security:oscarSec roleName="<%=roleName$%>"
-                                               objectName="_admin,_admin.userAdmin,_admin.schedule,_admin.billing,_admin.resource,_admin.reporting,_admin.backup,_admin.messenger,_admin.eform,_admin.encounter,_admin.misc,_admin.fax,_admin.flowsheet"
-                                               rights="r">
-
-                                <li id="admin2" class="<%= adminTabActive ? "nav-active" : "" %>">
-                                    <a href="javascript:void(0)" id="admin-panel" TITLE='<fmt:message key="admin.admin.page.title"/>'
-                                       onclick="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(administrationUrl)%>', function(u){ newWindow(u,'admin'); }, event);"><fmt:message key="provider.mainMenu.administration"/></a>
-                                </li>
-
-                            </security:oscarSec>
-                        </caisi:isModuleLoad>
-
                         <oscar:oscarPropertiesCheck property="referral_menu" value="yes">
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r">
                                 <li id="ref">
@@ -310,16 +308,18 @@
                             </a></li>
                         </oscar:oscarPropertiesCheck>
 
-                        <%
-                            boolean hide_eConsult = CarlosProperties.getInstance().isPropertyActive("hide_eConsult_link");
-                            if ("on".equalsIgnoreCase(prov) && !hide_eConsult) {
-                        %>
-                        <li id="econ" class="<%= econsultTabActive ? "nav-active" : "" %>">
-                            <a href="#" onclick="popupOscarRx(625, 1024, '<%=SafeEncode.forJavaScriptAttribute(econsultUrl)%>')"
-                               title="eConsult">
-                                <span><fmt:message key="provider.mainMenu.eConsult"/></span></a>
-                        </li>
-                        <% } %>
+                        <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
+                            <security:oscarSec roleName="<%=roleName$%>"
+                                               objectName="_admin,_admin.userAdmin,_admin.schedule,_admin.billing,_admin.resource,_admin.reporting,_admin.backup,_admin.messenger,_admin.eform,_admin.encounter,_admin.misc,_admin.fax,_admin.flowsheet"
+                                               rights="r">
+
+                                <li id="admin2" class="<%= adminTabActive ? "nav-active" : "" %>">
+                                    <a href="javascript:void(0)" id="admin-panel" TITLE='<fmt:message key="admin.admin.page.title"/>'
+                                       onclick="return openScheduleMenuSection('<%=SafeEncode.forJavaScriptAttribute(administrationUrl)%>', function(u){ newWindow(u,'admin'); }, event);"><fmt:message key="provider.mainMenu.administration"/></a>
+                                </li>
+
+                            </security:oscarSec>
+                        </caisi:isModuleLoad>
 
                         <security:oscarSec roleName="<%=roleName$%>" objectName="_dashboardDisplay" rights="r">
                             <%
@@ -414,11 +414,11 @@
                     </security:oscarSec>
                 </li>
             </ul>
-        </td>
-        <td>
-            <a id="logoutButton" title="<fmt:message key="global.btnLogout"/>" href="<%= request.getContextPath() %>/logoutPage">
-                <span class="fa-solid fa-power-off"></span>
-            </a>
+            <div>
+                <a id="logoutButton" title="<fmt:message key="global.btnLogout"/>" href="<%= request.getContextPath() %>/logoutPage">
+                    <span class="fa-solid fa-power-off"></span>
+                </a>
+            </div>
         </td>
 
     </tr>

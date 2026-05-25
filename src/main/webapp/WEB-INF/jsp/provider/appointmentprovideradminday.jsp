@@ -1119,15 +1119,6 @@
 
                             </security:oscarSec>
 
-                            <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
-                                <security:oscarSec roleName="<%=roleName$%>" objectName="_resource" rights="r">
-                                    <li>
-                                        <a href="https://www.oscargalaxy.org" target="_blank" rel="noopener noreferrer"
-                                           title="<fmt:message key="provider.appointmentProviderAdminDay.viewResources"/>"><fmt:message key="encounter.Index.clinicalResources"/></a>
-                                    </li>
-                                </security:oscarSec>
-                            </caisi:isModuleLoad>
-
                             <% if (isMobileOptimized) { %>
                         </ul>
                     </li> <!-- end menu list for mobile-->

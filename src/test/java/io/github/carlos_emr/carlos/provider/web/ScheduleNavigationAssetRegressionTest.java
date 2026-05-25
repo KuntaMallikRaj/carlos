@@ -117,6 +117,10 @@ class ScheduleNavigationAssetRegressionTest {
         assertThat(topnavCss)
                 .contains("table#firstTable .dashboardDropdown")
                 .contains("table#firstTable .dropdown:hover .dashboardDropdown")
+                .contains("ul#navlist li:not(.dashboardDropdown)")
+                .contains("ul#navlist li a:not(.dashboardDropdown)")
+                .contains("padding: 0;")
+                .doesNotContain("padding-left: 2.5px;")
                 .contains("li.nav-active > a")
                 .contains("background-color: #d9d9d9;")
                 .contains("color: #00283c !important;");
@@ -144,6 +148,10 @@ class ScheduleNavigationAssetRegressionTest {
                 .contains("requestPathMatches")
                 .contains("requestPathAttribute")
                 .contains("value instanceof String")
+                .contains("<td id=\"firstMenu\">")
+                .contains("<div class=\"icon-container\">")
+                .contains("<td id=\"userSettings\">")
+                .contains("<a id=\"logoutButton\"")
                 .contains("scheduleTabActive")
                 .contains("messengerTabActive")
                 .contains("requestPathMatches(request, \"/provider/providercontrol\",")
@@ -158,7 +166,8 @@ class ScheduleNavigationAssetRegressionTest {
                 .doesNotContain("resourceTabActive")
                 .doesNotContain("encounter.Index.clinicalResources");
         assertThat(appointmentProviderDay)
-                .contains("<li class=\"nav-active\">");
+                .contains("<li class=\"nav-active\">")
+                .doesNotContain("encounter.Index.clinicalResources");
         assertThat(scheduleScript)
                 .contains("var usesScheduleShell = scheduleNavigationMode === 'focused'"
                         + " || scheduleNavigationMode === 'tab';")
