@@ -3051,8 +3051,8 @@
     const contextPath = document.getElementById("contextPath").value;
     const inboxUrl = contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm";
     const unclaimedLabUrl = contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1";
-    const inboxLinkClickEvent = "return openScheduleMenuSection('" + inboxUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
-    const unclaimedLabLinkClickEvent = "return openScheduleMenuSection('" + unclaimedLabUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
+    const inboxLinkClickEvent = "return openScheduleSection('" + inboxUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
+    const unclaimedLabLinkClickEvent = "return openScheduleSection('" + unclaimedLabUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
 
     const inboxLink = document.getElementById("inboxLink");
     if (inboxLink) {
