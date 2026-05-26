@@ -219,12 +219,12 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_appointment.doctorLink"
                                                    rights="r">
                                     <li class="<%= inboxTabActive ? "nav-active" : "" %>">
-                                        <a HREF="#" id="inboxLink"
+                                        <a HREF="<%= scheduleNavActive ? request.getContextPath() + "/web/inboxhub/Inboxhub?method=displayInboxForm&scheduleNav=1" : "#" %>" id="inboxLink"
                                            TITLE='<fmt:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>
                                             <span id="oscar_new_lab"><fmt:message key="global.lab"/></span>
                                         </a>
                                         <oscar:newUnclaimedLab>
-                                            <a id="unclaimedLabLink" class="tabalert" HREF="javascript:void(0)"
+                                            <a id="unclaimedLabLink" class="tabalert" HREF="<%= scheduleNavActive ? request.getContextPath() + "/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1&scheduleNav=1" : "javascript:void(0)" %>"
                                                title='<fmt:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>U</a>
                                         </oscar:newUnclaimedLab>
                                     </li>
@@ -512,8 +512,10 @@
         };
     }
 
-    var inboxLinkClickEvent = "popupInboxManager('" + contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm', 800);return false;";
-    var unclaimedLabLinkClickEvent = "popupInboxManager('" + contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1', 800);return false;";
+    var inboxUrl = contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm";
+    var unclaimedLabUrl = contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1";
+    var inboxLinkClickEvent = "return openScheduleMenuSection('" + inboxUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
+    var unclaimedLabLinkClickEvent = "return openScheduleMenuSection('" + unclaimedLabUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
 
     const inboxLink = document.getElementById("inboxLink");
     if (inboxLink) {

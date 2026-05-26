@@ -55,6 +55,8 @@ class ScheduleNavigationAssetRegressionTest {
             Path.of("src", "main", "webapp", "WEB-INF", "jsp", "messenger", "ViewMessage.jsp");
     private static final Path CREATE_MESSAGE_JSP =
             Path.of("src", "main", "webapp", "WEB-INF", "jsp", "messenger", "CreateMessage.jsp");
+    private static final Path INBOXHUB_JSP =
+            Path.of("src", "main", "webapp", "WEB-INF", "jsp", "web", "inboxhub", "Inboxhub.jsp");
     private static final Path MAIN_MENU_JSP =
             Path.of("src", "main", "webapp", "WEB-INF", "jsp", "provider", "mainMenu.jsp");
     private static final Path APPOINTMENT_PROVIDER_DAY_JSP =
@@ -105,6 +107,7 @@ class ScheduleNavigationAssetRegressionTest {
         String displayMessages = Files.readString(DISPLAY_MESSAGES_JSP, StandardCharsets.UTF_8);
         String viewMessage = Files.readString(VIEW_MESSAGE_JSP, StandardCharsets.UTF_8);
         String createMessage = Files.readString(CREATE_MESSAGE_JSP, StandardCharsets.UTF_8);
+        String inboxhub = Files.readString(INBOXHUB_JSP, StandardCharsets.UTF_8);
         String mainMenu = Files.readString(MAIN_MENU_JSP, StandardCharsets.UTF_8);
         String appointmentProviderDay = Files.readString(APPOINTMENT_PROVIDER_DAY_JSP, StandardCharsets.UTF_8);
         String scheduleScript = Files.readString(SCHEDULE_PAGE_SCRIPT, StandardCharsets.UTF_8);
@@ -144,6 +147,10 @@ class ScheduleNavigationAssetRegressionTest {
                 .contains("<jsp:include page=\"/WEB-INF/jsp/provider/mainMenu.jsp\"/>")
                 .contains("ClearMessage<%=scheduleNavFirstQuerySuffix%>")
                 .contains("DisplayMessages<%=scheduleNavFirstQuerySuffix%>");
+        assertThat(inboxhub)
+                .contains("<c:if test=\"${param.scheduleNav eq '1'}\">")
+                .contains("<link rel=\"stylesheet\" type=\"text/css\" href=\"${pageContext.request.contextPath}/css/topnav.css\"/>")
+                .contains("<jsp:include page=\"/WEB-INF/jsp/provider/mainMenu.jsp\"/>");
         assertThat(mainMenu)
                 .contains("requestPathMatches")
                 .contains("requestPathAttribute")
@@ -157,7 +164,12 @@ class ScheduleNavigationAssetRegressionTest {
                 .contains("requestPathMatches(request, \"/provider/providercontrol\",")
                 .contains("\"/provider/appointmentprovideradmin\", \"/provider/appointmentprovideradminday\")")
                 .contains("class=\"<%= scheduleTabActive ? \"nav-active\" : \"\" %>\"")
+                .contains("class=\"<%= inboxTabActive ? \"nav-active\" : \"\" %>\"")
+                .contains("HREF=\"<%= scheduleNavActive ? request.getContextPath() + \"/web/inboxhub/Inboxhub?method=displayInboxForm&scheduleNav=1\" : \"#\" %>\" id=\"inboxLink\"")
+                .contains("HREF=\"<%= scheduleNavActive ? request.getContextPath() + \"/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1&scheduleNav=1\" : \"javascript:void(0)\" %>\"")
                 .contains("class=\"<%= messengerTabActive ? \"nav-active\" : \"\" %>\"")
+                .contains("var inboxUrl = contextPath + \"/web/inboxhub/Inboxhub?method=displayInboxForm\";")
+                .contains("return openScheduleMenuSection('\" + inboxUrl + \"', function(u){ popupInboxManager(u, 800); }, event);")
                 .contains("!window.popup.scheduleMenuFallback")
                 .contains("fallbackMenuPopup.scheduleMenuFallback = true;")
                 .contains("window.popup = fallbackMenuPopup;")
@@ -167,6 +179,11 @@ class ScheduleNavigationAssetRegressionTest {
                 .doesNotContain("encounter.Index.clinicalResources");
         assertThat(appointmentProviderDay)
                 .contains("<li class=\"nav-active\">")
+                .contains("HREF=\"<%= \"1\".equals(request.getParameter(\"scheduleNav\")) ? request.getContextPath() + \"/web/inboxhub/Inboxhub?method=displayInboxForm&scheduleNav=1\" : \"#\" %>\" id=\"inboxLink\"")
+                .contains("HREF=\"<%= \"1\".equals(request.getParameter(\"scheduleNav\")) ? request.getContextPath() + \"/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1&scheduleNav=1\" : \"javascript:void(0)\" %>\"")
+                .contains("const inboxUrl = contextPath + \"/web/inboxhub/Inboxhub?method=displayInboxForm\";")
+                .contains("return openScheduleMenuSection('\" + inboxUrl + \"', function(u){ popupInboxManager(u, 800); }, event);")
+                .doesNotContain("popupInboxManager('\" + contextPath + \"/web/inboxhub/Inboxhub?method=displayInboxForm', 800);return false;")
                 .doesNotContain("encounter.Index.clinicalResources");
         assertThat(scheduleScript)
                 .contains("var usesScheduleShell = scheduleNavigationMode === 'focused'"

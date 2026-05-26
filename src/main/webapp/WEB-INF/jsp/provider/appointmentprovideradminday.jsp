@@ -955,11 +955,11 @@
                                 <oscar:oscarPropertiesCheck property="NOT_FOR_CAISI" value="no" defaultVal="true">
                                     <c:if test="${doctorLinkRights}">
                                         <li>
-                                       <a HREF="#" id="inboxLink">
+                                       <a HREF="<%= "1".equals(request.getParameter("scheduleNav")) ? request.getContextPath() + "/web/inboxhub/Inboxhub?method=displayInboxForm&scheduleNav=1" : "#" %>" id="inboxLink">
                                                 <span id="oscar_new_lab" title="<fmt:message key="provider.appointmentProviderAdminDay.viewLabReports"/>"><fmt:message key="global.lab"/></span>
                                             </a>
                                             <oscar:newUnclaimedLab>
-                                                <a id="unclaimedLabLink" class="tabalert" HREF="javascript:void(0)"
+                                                <a id="unclaimedLabLink" class="tabalert" HREF="<%= "1".equals(request.getParameter("scheduleNav")) ? request.getContextPath() + "/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1&scheduleNav=1" : "javascript:void(0)" %>"
                                                    title='<fmt:message key="inbox.inboxmanager.msgUnmatched"/>'>U</a>
                                             </oscar:newUnclaimedLab>
                                         </li>
@@ -3049,8 +3049,10 @@
 
 <script>
     const contextPath = document.getElementById("contextPath").value;
-    const inboxLinkClickEvent = "popupInboxManager('" + contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm', 800);return false;";
-    const unclaimedLabLinkClickEvent = "popupInboxManager('" + contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1', 800);return false;";
+    const inboxUrl = contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm";
+    const unclaimedLabUrl = contextPath + "/web/inboxhub/Inboxhub?method=displayInboxForm&unclaimed=1";
+    const inboxLinkClickEvent = "return openScheduleMenuSection('" + inboxUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
+    const unclaimedLabLinkClickEvent = "return openScheduleMenuSection('" + unclaimedLabUrl + "', function(u){ popupInboxManager(u, 800); }, event);";
 
     const inboxLink = document.getElementById("inboxLink");
     if (inboxLink) {
