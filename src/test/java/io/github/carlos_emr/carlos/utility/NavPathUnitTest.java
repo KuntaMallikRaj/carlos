@@ -75,7 +75,7 @@ class NavPathUnitTest {
 
         @Test
         void shouldReturnTrue_whenPatternMatchesWithSlashBoundary() {
-            assertThat(NavPath.pathMatches("/provider/appointmentprovideradminday", "/provider/appointmentprovideradmin")).isTrue();
+            assertThat(NavPath.pathMatches("/provider/appointmentprovideradmin/day", "/provider/appointmentprovideradmin")).isTrue();
         }
 
         @Test
