@@ -31,7 +31,7 @@ public final class NavPath {
      * preventing ClassCastException from non-String forward attribute types.
      */
     static String forwardAttribute(Object value) {
-        return value instanceof String ? (String) value : "";
+        return value instanceof String string ? string : "";
     }
 
     /**
