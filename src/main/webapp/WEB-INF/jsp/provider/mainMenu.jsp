@@ -54,50 +54,9 @@
 <%@ page import="io.github.carlos_emr.carlos.commn.model.UserProperty" %>
 <%@ page import="io.github.carlos_emr.carlos.commn.model.Provider" %>
 <%@ page import="io.github.carlos_emr.carlos.utility.SafeEncode" %>
+<%@ page import="io.github.carlos_emr.carlos.utility.NavPath" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="carlos" prefix="carlos" %>
-
-<%!
-    private String requestPathAttribute(Object value) {
-        return value instanceof String ? (String) value : "";
-    }
-
-    private boolean pathMatches(String path, String pattern) {
-        if (StringUtils.isBlank(path) || StringUtils.isBlank(pattern)) {
-            return false;
-        }
-
-        int index = path.indexOf(pattern);
-        if (index < 0) {
-            return false;
-        }
-
-        int boundaryIndex = index + pattern.length();
-        if (boundaryIndex >= path.length() || pattern.endsWith("/")) {
-            return true;
-        }
-
-        char boundary = path.charAt(boundaryIndex);
-        return boundary == '/' || boundary == '?' || boundary == ';' || boundary == '#';
-    }
-
-    private boolean requestPathMatches(jakarta.servlet.http.HttpServletRequest request, String... patterns) {
-        String requestUri = StringUtils.defaultString(request.getRequestURI());
-        String servletPath = StringUtils.defaultString(request.getServletPath());
-        String forwardRequestUri = requestPathAttribute(request.getAttribute("jakarta.servlet.forward.request_uri"));
-        String forwardServletPath = requestPathAttribute(request.getAttribute("jakarta.servlet.forward.servlet_path"));
-
-        for (String pattern : patterns) {
-            if (pathMatches(requestUri, pattern)
-                    || pathMatches(servletPath, pattern)
-                    || pathMatches(forwardRequestUri, pattern)
-                    || pathMatches(forwardServletPath, pattern)) {
-                return true;
-            }
-        }
-        return false;
-    }
-%>
 
 <%
     GregorianCalendar cal = new GregorianCalendar();
@@ -126,20 +85,20 @@
     String userlastname = loggedInProvider != null ? loggedInProvider.getLastName() : "";
     String encodedUserName = URLEncoder.encode(StringUtils.trim(userfirstname + " " + userlastname), StandardCharsets.UTF_8);
     boolean scheduleNavActive = "1".equals(request.getParameter("scheduleNav"));
-    boolean scheduleTabActive = requestPathMatches(request, "/provider/providercontrol",
+    boolean scheduleTabActive = NavPath.requestPathMatches(request, "/provider/providercontrol",
             "/provider/appointmentprovideradmin", "/provider/appointmentprovideradminday");
-    boolean searchTabActive = requestPathMatches(request, "/demographic/ViewSearch",
+    boolean searchTabActive = NavPath.requestPathMatches(request, "/demographic/ViewSearch",
             "/PMmodule/ClientSearch", "/PMmodule/ClientSearch2");
-    boolean inboxTabActive = requestPathMatches(request, "/web/inboxhub",
+    boolean inboxTabActive = NavPath.requestPathMatches(request, "/web/inboxhub",
             "/documentManager/ViewInbox");
-    boolean ticklerTabActive = requestPathMatches(request, "/tickler/");
-    boolean messengerTabActive = requestPathMatches(request, "/messenger/");
-    boolean consultationTabActive = requestPathMatches(request, "/encounter/IncomingConsultation",
+    boolean ticklerTabActive = NavPath.requestPathMatches(request, "/tickler/");
+    boolean messengerTabActive = NavPath.requestPathMatches(request, "/messenger/");
+    boolean consultationTabActive = NavPath.requestPathMatches(request, "/encounter/IncomingConsultation",
             "/encounter/oscarConsultationRequest");
-    boolean documentTabActive = requestPathMatches(request, "/documentManager/") && !inboxTabActive;
-    boolean reportTabActive = requestPathMatches(request, "/report/", "/oscarReport/");
-    boolean adminTabActive = requestPathMatches(request, "/administration", "/admin/");
-    boolean econsultTabActive = requestPathMatches(request, "/encounter/econsult");
+    boolean documentTabActive = NavPath.requestPathMatches(request, "/documentManager/") && !inboxTabActive;
+    boolean reportTabActive = NavPath.requestPathMatches(request, "/report/", "/oscarReport/");
+    boolean adminTabActive = NavPath.requestPathMatches(request, "/administration", "/admin/");
+    boolean econsultTabActive = NavPath.requestPathMatches(request, "/encounter/econsult");
 
     // Build menu destinations once so same-tab navigation and popup fallbacks cannot drift apart.
     String messengerUrl = request.getContextPath() + "/messenger/DisplayMessages?providerNo=" + curUser_no + "&userName=" + encodedUserName;
